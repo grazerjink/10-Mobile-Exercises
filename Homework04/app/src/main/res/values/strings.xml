@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Cookie Monster</string>
+    <string name="total_monster_1">Total cookies eaten: %1$d</string>
+    <string name="total_monster_2">Total cookies eaten: %1$d</string>
+    <string name="total_grandma">Total cookies baked: %1$d</string>
+    <string name="clock_time">Simulation Clock:  %1$d / 120 sec.</string>
+</resources>
