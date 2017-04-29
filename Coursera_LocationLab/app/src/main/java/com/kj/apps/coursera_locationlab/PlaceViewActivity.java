@@ -76,12 +76,12 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 
             @Override
             public void onClick(View arg0) {
+                Log.d(TAG, "onClick: " + mLastLocationReading);
                 boolean lastLocation = (mLastLocationReading != null
                         && ageInMilliseconds(mLastLocationReading) < FIVE_MINS);
                 if (!lastLocation) {
                     // Trường hợp chưa có vị trí hiện tại
                     Log.i(TAG, "Chưa xác định được vị trí hiện tại.");
-                    Toast.makeText(arg0.getContext(), "Chưa xác định được vị trí hiện tại", Toast.LENGTH_SHORT).show();
                 } else {
                     if (mAdapter.intersects(mLastLocationReading)) {
                         // Giao điểm của vị trí đang đứng (user á) đã được xác nhận và
@@ -97,12 +97,9 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
                 }
             }
         });
-
         placesListView.addFooterView(footerView);
         mAdapter = new PlaceViewAdapter(getApplicationContext());
-
         setListAdapter(mAdapter);
-
     }
 
     @Override
@@ -126,6 +123,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
         }
 
         mLastLocationReading = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
         if (mLastLocationReading != null && ageInMilliseconds(mLastLocationReading) > FIVE_MINS) {
             // Nếu mà cái local mình đã có badge mà nó đã
             // quá cũ thì làm mới lại thôi

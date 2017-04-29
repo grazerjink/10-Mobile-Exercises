@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cookie Monster</string>
+    <string name="app_name">Homework 04</string>
     <string name="total_monster_1">Total cookies eaten: %1$d</string>
     <string name="total_monster_2">Total cookies eaten: %1$d</string>
     <string name="total_grandma">Total cookies baked: %1$d</string>

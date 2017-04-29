@@ -63,14 +63,14 @@ public class PlaceDownloaderTask extends AsyncTask<Location, Void, PlaceRecord> 
 			sStubBitmap = BitmapFactory.decodeResource(parent.getResources(),
 					R.drawable.stub);
 
-			sMockLoc1.setLatitude(10.8225153);
-			sMockLoc1.setLongitude(106.6278076);
+			sMockLoc1.setLatitude(37.422);
+			sMockLoc1.setLongitude(-122.084);
 			sMockCountryName1 = parent
-					.getString(R.string.mock_name_viet_nam_string);
-			sMockPlaceName1 = parent.getString(R.string.ho_chi_minh_string);
-			sMockLoc2.setLatitude(10.778438);
-			sMockLoc2.setLongitude(106.636644);
-			sMockPlaceName2 = parent.getString(R.string.quan_tan_phu_string);
+					.getString(R.string.mock_name_united_states_string);
+			sMockPlaceName1 = parent.getString(R.string.the_greenhouse_string);
+			sMockLoc2.setLatitude(38.996667);
+			sMockLoc2.setLongitude(-76.9275);
+			sMockPlaceName2 = parent.getString(R.string.berwyn_string);
 			sMockLoc3.setLatitude(0);
 			sMockLoc3.setLongitude(0);
 			sMockCountryNameInvalid = "";
@@ -90,9 +90,11 @@ public class PlaceDownloaderTask extends AsyncTask<Location, Void, PlaceRecord> 
 			place.setLocation(location[0]);
 
 			if ("" != place.getCountryName()) {
-				place.setFlagBitmap(getFlagFromURL(place.getFlagUrl()));
+				Log.d(TAG, "doInBackground: " + place.getFlagUrl());
+				//place.setFlagBitmap(getFlagFromURL(place.getFlagUrl()));
 			} else {
-				place.setFlagBitmap(sStubBitmap);
+				//place.setFlagBitmap(sStubBitmap);
+				place.setFlagBitmap(getFlagFromURL(place.getFlagUrl()));
 			}
 		} else {
 

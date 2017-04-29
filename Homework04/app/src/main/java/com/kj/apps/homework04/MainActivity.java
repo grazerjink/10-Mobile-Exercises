@@ -3,6 +3,7 @@ package com.kj.apps.homework04;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -19,20 +20,96 @@ public class MainActivity extends AppCompatActivity {
     CountDownTimer grandmaIimer;
     CountDownTimer monster1Timer;
     CountDownTimer monster2Timer;
-    Thread threadM1;
-    Thread threadM2;
+    Runnable run1;
+    Runnable run2;
     int total1;
     int total2;
     int totalGrandma;
     boolean isStarting = false;
+    final Random rd = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         addControls();
-        addEvents();
+        run1 = new Runnable() {
+            @Override
+            public void run() {
+                if (totalGrandma > 0) {
+                    final int rd_time = rd.nextInt(5) + 1;
+                    proMonster1.setMax(rd_time);
+                    proMonster1.setProgress(rd_time);
+                    monster1Timer = new CountDownTimer(rd_time * 1000, 990) {
+                        int i = rd_time;
 
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            --i;
+                            try {
+                                Thread.sleep(150);
+                                proMonster1.setProgress(i);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            totalGrandma--;
+                            total1++;
+                            String cookie_eaten = String.format(getString(R.string.total_monster_1).toString(), total1);
+                            tvMonster1.setText(cookie_eaten);
+                            String cookie_baked = String.format(getString(R.string.total_grandma).toString(), totalGrandma);
+                            tvGrandma.setText(cookie_baked);
+                            proMonster1.setProgress(0);
+                            proMonster1.postDelayed(run1, 1000);
+                        }
+                    }.start();
+                } else {
+                    proMonster1.postDelayed(run1, 1000);
+                }
+            }
+        };
+        run2 = new Runnable() {
+            @Override
+            public void run() {
+                if (totalGrandma > 0) {
+                    final int rd_time = rd.nextInt(5) + 1;
+                    proMonster2.setMax(rd_time);
+                    proMonster2.setProgress(rd_time);
+                    monster2Timer = new CountDownTimer(rd_time * 1000, 990) {
+                        int i = rd_time;
+
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            --i;
+                            try {
+                                Thread.sleep(150);
+                                proMonster2.setProgress(i);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            totalGrandma--;
+                            total2++;
+                            String cookie_eaten = String.format(getString(R.string.total_monster_2).toString(), total2);
+                            tvMonster2.setText(cookie_eaten);
+                            String cookie_baked = String.format(getString(R.string.total_grandma).toString(), totalGrandma);
+                            tvGrandma.setText(cookie_baked);
+                            proMonster2.setProgress(0);
+                            proMonster2.postDelayed(run2, 1000);
+                        }
+                    }.start();
+                } else {
+                    proMonster2.postDelayed(run2, 1000);
+                }
+            }
+        };
+        addEvents();
     }
 
     private void addEvents() {
@@ -65,25 +142,10 @@ public class MainActivity extends AppCompatActivity {
         if (monster2Timer != null) {
             monster2Timer.cancel();
         }
-        if (!threadM1.isInterrupted()) {
-            threadM1.interrupt();
-        }
-        if (!threadM2.isInterrupted()) {
-            threadM2.interrupt();
-        }
         thietLapBanDau();
     }
 
     void thietLapBanDau() {
-        String clock_time = String.format(getString(R.string.clock_time).toString(), 120);
-        tvClock.setText(clock_time);
-        proClock.setProgress(120);
-
-        String bakes = String.format(getString(R.string.total_grandma).toString(), 0);
-        tvGrandma.setText(bakes);
-        totalGrandma = 0;
-        proGrandma.setProgress(0);
-
         String total_1 = String.format(getString(R.string.total_monster_1).toString(), 0);
         tvMonster1.setText(total_1);
         total1 = 0;
@@ -95,6 +157,15 @@ public class MainActivity extends AppCompatActivity {
         total2 = 0;
         proMonster2.setMax(100);
         proMonster2.setProgress(100);
+
+        String clock_time = String.format(getString(R.string.clock_time).toString(), 120);
+        tvClock.setText(clock_time);
+        proClock.setProgress(120);
+
+        String bakes = String.format(getString(R.string.total_grandma).toString(), 0);
+        tvGrandma.setText(bakes);
+        totalGrandma = 0;
+        proGrandma.setProgress(0);
     }
 
     private void xuLyBatDau() {
@@ -134,10 +205,9 @@ public class MainActivity extends AppCompatActivity {
 
     void startSimulation(final int time) {
         startBakeCookie();
-        threadM1 = new Thread(runnableForEatingFor1());
-        threadM2 = new Thread(runnableForEatingFor2());
-        threadM1.start();
-        threadM2.start();
+        run1.run();
+        run2.run();
+        Log.d("TAG", "startSimulation: " + Thread.currentThread().getName());
         countDowntimer = new CountDownTimer(time * 1000, 992) {
             int i = time;
 
@@ -151,17 +221,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                xuLyKetThuc();
                 if (total1 == 100)
                     Toast.makeText(MainActivity.this, "Monster 1 is WINNER !", Toast.LENGTH_LONG).show();
-                if (total2 == 100)
+                else if (total2 == 100)
                     Toast.makeText(MainActivity.this, "Monster 2 is WINNER !", Toast.LENGTH_LONG).show();
-                if (total1 < total2)
+                else if (total1 < total2)
                     Toast.makeText(MainActivity.this, "Monster 2 is WINNER !", Toast.LENGTH_LONG).show();
-                if (total1 > total2)
+                else if (total1 > total2)
                     Toast.makeText(MainActivity.this, "Monster 1 is WINNER !", Toast.LENGTH_LONG).show();
-                if (total1 == total2)
+                else
                     Toast.makeText(MainActivity.this, "The match is DRAW!", Toast.LENGTH_LONG).show();
+                xuLyKetThuc();
             }
         }.start();
     }
@@ -183,100 +253,6 @@ public class MainActivity extends AppCompatActivity {
                 tvGrandma.setText(cookie_baked);
                 proGrandma.setProgress(0);
                 startBakeCookie();
-            }
-        }.start();
-    }
-
-    Runnable runnableForEatingFor1() {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (totalGrandma > 0) {
-                    startToEatingForMonster1();
-                } else {
-                    proMonster1.postDelayed(runnableForEatingFor1(), 1000);
-                }
-            }
-        };
-        return runnable;
-    }
-
-    Runnable runnableForEatingFor2() {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (totalGrandma > 0) {
-                    startToEatingForMonster2();
-                } else {
-                    proMonster2.postDelayed(runnableForEatingFor2(), 1000);
-                }
-            }
-        };
-        return runnable;
-    }
-
-    void startToEatingForMonster1() {
-        Random rd = new Random();
-        final int rd_time = rd.nextInt(5) + 1;
-        proMonster1.setMax(rd_time);
-        proMonster1.setProgress(rd_time);
-        monster1Timer = new CountDownTimer(rd_time * 1000, 990) {
-            int i = rd_time;
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                --i;
-                try {
-                    Thread.sleep(200);
-                    proMonster1.setProgress(i);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                totalGrandma--;
-                total1++;
-                String cookie_eaten = String.format(getString(R.string.total_monster_1).toString(), total1);
-                tvMonster1.setText(cookie_eaten);
-                String cookie_baked = String.format(getString(R.string.total_grandma).toString(), totalGrandma);
-                tvGrandma.setText(cookie_baked);
-                proMonster1.setProgress(0);
-                proMonster1.postDelayed(runnableForEatingFor1(), 1000);
-            }
-        }.start();
-    }
-
-    void startToEatingForMonster2() {
-        Random rd = new Random();
-        final int rd_time = rd.nextInt(5) + 1;
-        proMonster2.setMax(rd_time);
-        proMonster2.setProgress(rd_time);
-        monster2Timer = new CountDownTimer(rd_time * 1000, 990) {
-            int i = rd_time;
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                --i;
-                try {
-                    Thread.sleep(200);
-                    proMonster2.setProgress(i);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                totalGrandma--;
-                total2++;
-                String cookie_eaten = String.format(getString(R.string.total_monster_2).toString(), total2);
-                tvMonster2.setText(cookie_eaten);
-                String cookie_baked = String.format(getString(R.string.total_grandma).toString(), totalGrandma);
-                tvGrandma.setText(cookie_baked);
-                proMonster2.setProgress(0);
-                proMonster2.postDelayed(runnableForEatingFor2(), 1000);
             }
         }.start();
     }
