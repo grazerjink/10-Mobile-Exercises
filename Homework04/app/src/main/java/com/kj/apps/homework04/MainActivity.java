@@ -36,6 +36,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         addControls();
+        addEvents();
+    }
+
+    private void addControls() {
+        proMonster1 = (ProgressBar) findViewById(R.id.proMonster1);
+        proMonster1.setScaleY(5);
+        proMonster2 = (ProgressBar) findViewById(R.id.proMonster2);
+        proMonster2.setScaleY(5);
+
+        proGrandma = (ProgressBar) findViewById(R.id.proGrandma);
+        proGrandma.setVisibility(View.INVISIBLE);
+        proGrandma.setMax(5);
+        proGrandma.setProgress(0);
+
+        proClock = (ProgressBar) findViewById(R.id.proClock);
+        proClock.setScaleY(5);
+        proClock.setMax(120);
+        proClock.setProgress(120);
+        tvMonster1 = (TextView) findViewById(R.id.tvMonster1Eaten);
+        tvMonster2 = (TextView) findViewById(R.id.tvMonster2Eaten);
+        tvGrandma = (TextView) findViewById(R.id.tvGrandmaEaten);
+        tvClock = (TextView) findViewById(R.id.tvClock);
+        btnCancel = (Button) findViewById(R.id.btnCancel);
+        btnStart = (Button) findViewById(R.id.btnStart);
+        thietLapBanDau();
+
         run1 = new Runnable() {
             @Override
             public void run() {
@@ -64,14 +90,15 @@ public class MainActivity extends AppCompatActivity {
                             String cookie_eaten = String.format(getString(R.string.total_monster_1).toString(), total1);
                             tvMonster1.setText(cookie_eaten);
                             proMonster1.setProgress(0);
-                            proMonster1.postDelayed(run1, 1000);
+                            proMonster1.postDelayed(run1, 500);
                         }
                     }.start();
                 } else {
-                    proMonster1.postDelayed(run1, 1000);
+                    proMonster1.postDelayed(run1, 500);
                 }
             }
         };
+
         run2 = new Runnable() {
             @Override
             public void run() {
@@ -100,39 +127,14 @@ public class MainActivity extends AppCompatActivity {
                             String cookie_eaten = String.format(getString(R.string.total_monster_2).toString(), total2);
                             tvMonster2.setText(cookie_eaten);
                             proMonster2.setProgress(0);
-                            proMonster2.postDelayed(run2, 1000);
+                            proMonster2.postDelayed(run2, 500);
                         }
                     }.start();
                 } else {
-                    proMonster2.postDelayed(run2, 1000);
+                    proMonster2.postDelayed(run2, 500);
                 }
             }
         };
-        addEvents();
-    }
-
-    private void addControls() {
-        proMonster1 = (ProgressBar) findViewById(R.id.proMonster1);
-        proMonster1.setScaleY(5);
-        proMonster2 = (ProgressBar) findViewById(R.id.proMonster2);
-        proMonster2.setScaleY(5);
-
-        proGrandma = (ProgressBar) findViewById(R.id.proGrandma);
-        proGrandma.setVisibility(View.INVISIBLE);
-        proGrandma.setMax(5);
-        proGrandma.setProgress(0);
-
-        proClock = (ProgressBar) findViewById(R.id.proClock);
-        proClock.setScaleY(5);
-        proClock.setMax(120);
-        proClock.setProgress(120);
-        tvMonster1 = (TextView) findViewById(R.id.tvMonster1Eaten);
-        tvMonster2 = (TextView) findViewById(R.id.tvMonster2Eaten);
-        tvGrandma = (TextView) findViewById(R.id.tvGrandmaEaten);
-        tvClock = (TextView) findViewById(R.id.tvClock);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
-        btnStart = (Button) findViewById(R.id.btnStart);
-        thietLapBanDau();
     }
 
     private void addEvents() {
@@ -262,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startEating() {
-        run1.run();
-        run2.run();
+        proMonster1.postDelayed(run1,1000);
+        proMonster2.postDelayed(run2,1000);
     }
 }
