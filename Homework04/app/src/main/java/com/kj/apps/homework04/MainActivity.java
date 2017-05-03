@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }.start();
                 } else {
+                    if (monster1Timer != null)
+                        monster1Timer.cancel();
                     proMonster1.postDelayed(run1, 500);
                 }
             }
@@ -131,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }.start();
                 } else {
+                    if (monster2Timer != null)
+                        monster2Timer.cancel();
                     proMonster2.postDelayed(run2, 500);
                 }
             }
@@ -178,25 +182,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void xuLyKetThuc() {
+        if (countDowntimer != null)
+            countDowntimer.cancel();
+        if (grandmaIimer != null)
+            grandmaIimer.cancel();
+        if (monster1Timer != null)
+            monster1Timer.cancel();
+        if (monster2Timer != null)
+            monster2Timer.cancel();
+
         proGrandma.setVisibility(View.INVISIBLE);
         isStarting = false;
         thietLapBanDau();
-        if (countDowntimer != null) {
-            countDowntimer.cancel();
-        }
-        if (grandmaIimer != null) {
-            grandmaIimer.cancel();
-        }
-        if (monster1Timer != null) {
-            monster1Timer.cancel();
-        }
-        if (monster2Timer != null) {
-            monster2Timer.cancel();
-        }
     }
 
     private void xuLyBatDau() {
-        proGrandma.setVisibility(View.VISIBLE);
         if (isStarting == false) {
             isStarting = true;
             thietLapBanDau();
@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSimulation(final int time) {
+        proGrandma.setVisibility(View.VISIBLE);
         startBakeCookie();
         startEating();
         countDowntimer = new CountDownTimer(time * 1000, 992) {
@@ -247,11 +248,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                if (totalGrandma < 50) {
-                    totalGrandma += 10;
-                    String cookie_baked = String.format(getString(R.string.total_grandma).toString(), totalGrandma);
-                    tvGrandma.setText(cookie_baked);
-                }
+                totalGrandma += 10;
+                String cookie_baked = String.format(getString(R.string.total_grandma).toString(), totalGrandma);
+                tvGrandma.setText(cookie_baked);
                 startBakeCookie();
             }
         }.start();
@@ -264,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startEating() {
-        proMonster1.postDelayed(run1,1000);
-        proMonster2.postDelayed(run2,1000);
+        run1.run();
+        run2.run();
     }
 }

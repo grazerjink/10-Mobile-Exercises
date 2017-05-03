@@ -88,13 +88,10 @@ public class PlaceDownloaderTask extends AsyncTask<Location, Void, PlaceRecord> 
 			// Get the PlaceBadge information
 			place = getPlaceFromURL(generateURL(USERNAME, location[0]));
 			place.setLocation(location[0]);
-
 			if ("" != place.getCountryName()) {
-				Log.d(TAG, "doInBackground: " + place.getFlagUrl());
-				//place.setFlagBitmap(getFlagFromURL(place.getFlagUrl()));
-			} else {
-				//place.setFlagBitmap(sStubBitmap);
 				place.setFlagBitmap(getFlagFromURL(place.getFlagUrl()));
+			} else {
+				place.setFlagBitmap(sStubBitmap);
 			}
 		} else {
 

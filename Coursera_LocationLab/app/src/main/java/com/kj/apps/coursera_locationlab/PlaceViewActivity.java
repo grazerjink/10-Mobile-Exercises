@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -72,6 +74,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
         // a PlaceBadge. In this case download the information needed to make a new
         // PlaceBadge.
 
+        networkStates();
         footerView.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -100,6 +103,22 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
         placesListView.addFooterView(footerView);
         mAdapter = new PlaceViewAdapter(getApplicationContext());
         setListAdapter(mAdapter);
+    }
+
+    public void networkStates() {
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null) {
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                        sHasNetwork = true;
+                    }
+                }
+            }
+        } else {
+            sHasNetwork = false;
+        }
     }
 
     @Override
