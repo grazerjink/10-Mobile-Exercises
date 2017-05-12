@@ -86,8 +86,6 @@ public class DownloaderTaskFragment extends Fragment {
     // public class DownloaderTask extends ...
     public class DownloaderTask extends AsyncTask<Integer, Integer, String[]> {
 
-        String[] feeds;
-
         @Override
         protected String[] doInBackground(Integer... params) {
             return downloadTweets(params);
