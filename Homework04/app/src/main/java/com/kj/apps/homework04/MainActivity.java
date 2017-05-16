@@ -99,19 +99,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void xuLyKetThuc() {
-        if (countDowntimer != null) countDowntimer.cancel();
-        if (grandmaIimer != null) grandmaIimer.cancel();
-        isStarting = false;
-        t1.dunglai();
-        t2.dunglai();
-        thietLapBanDau();
-        Toast.makeText(this, "Cuộc thi đã dừng lại....!", Toast.LENGTH_SHORT).show();
+        if (isStarting == true) {
+            isStarting = false;
+            thietLapBanDau();
+            if (countDowntimer != null) countDowntimer.cancel();
+            if (grandmaIimer != null) grandmaIimer.cancel();
+            t1.interrupt();
+            t2.interrupt();
+            Toast.makeText(this, "Cuộc thi đã dừng lại....!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     void xuLyBatDau() {
         if (isStarting == false) {
-            isStarting = true;
             thietLapBanDau();
+            proGrandma.setVisibility(View.VISIBLE);
             startSimulation();
         } else {
             Toast.makeText(this, "Cuộc thi đang diễn ra....!", Toast.LENGTH_SHORT).show();
@@ -119,12 +121,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void startSimulation() {
-        proGrandma.setVisibility(View.VISIBLE);
+        isStarting = true;
         startBakeCookie();
         t1 = new M1Thread();
         t2 = new M2Thread();
-        t1.tienhanh();
-        t2.tienhanh();
         t1.start();
         t2.start();
         countDowntimer = new CountDownTimer(120 * 1000, 992) {
@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
 
     void startBakeCookie() {
         grandmaIimer = new CountDownTimer(5000, 996) {
-            int i = 0;
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -176,16 +175,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class M1Thread extends Thread {
-        boolean isrunning = false;
 
         @Override
         public void run() {
-            while (isrunning) {
+            while (isStarting) {
                 if (totalGrandma > 0) {
                     int time = rd.nextInt(4) + 1;
                     proMonster1.setMax(time);
                     proMonster1.setProgress(time);
-                    for (int i = time; i >= 0; i--) {
+                    for (int i = time; i >= 0 && isStarting; i--) {
                         try {
                             proMonster1.setProgress(i);
                             this.sleep(1000);
@@ -196,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                     tvMonster1.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (!isrunning) {
+                            if (isStarting == false) {
                                 thietLapBanDau();
                             } else {
                                 String total = String.format(getString(R.string.total_monster_1).toString(), (total1 += 1));
@@ -212,27 +210,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
-        public void tienhanh() {
-            isrunning = true;
-        }
-
-        public void dunglai() {
-            isrunning = false;
-        }
     }
 
     class M2Thread extends Thread {
-        boolean isrunning = false;
 
         @Override
         public void run() {
-            while (isrunning) {
+            while (isStarting) {
                 if (totalGrandma > 0) {
                     int time = rd.nextInt(4) + 1;
                     proMonster2.setMax(time);
                     proMonster2.setProgress(time);
-                    for (int i = time; i >= 0; i--) {
+                    for (int i = time; i >= 0 && isStarting; i--) {
                         try {
                             proMonster2.setProgress(i);
                             this.sleep(1000);
@@ -243,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                     tvMonster1.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (!isrunning) {
+                            if (isStarting == false) {
                                 thietLapBanDau();
                             } else {
                                 String total = String.format(getString(R.string.total_monster_1).toString(), (total2 += 1));
@@ -259,14 +248,6 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }
-        }
-
-        public void tienhanh() {
-            isrunning = true;
-        }
-
-        public void dunglai() {
-            isrunning = false;
         }
     }
 }
